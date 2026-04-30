@@ -12,3 +12,12 @@ position = Vector2(-82, 33)
 zoom = Vector2(4, 4)
 
 [node name="Player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
+position = Vector2(45, 0)
+jump_key = 4194320
+
+[node name="Player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
+position = Vector2(-45, 0)
+left_key = 65
+right_key = 68
+jump_key = 87
+player_color = Color(0.28839856, 0.6254761, 0.9371392, 1)

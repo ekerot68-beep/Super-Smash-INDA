@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bipii2rnpkppq"]
 
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_yqjtg"]
 
 [node name="Game" type="Node2D" unique_id=1458226988]
 
@@ -9,3 +10,18 @@ position = Vector2(-82, 33)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=930410798]
 zoom = Vector2(4, 4)
+
+[node name="Player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
+position = Vector2(45, 0)
+left_key = 76
+right_key = 39
+jump_key = 80
+attack_key = 44
+
+[node name="Player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
+position = Vector2(-45, 0)
+left_key = 65
+right_key = 68
+jump_key = 87
+attack_key = 32
+player_color = Color(0.28839856, 0.6254761, 0.9371392, 1)

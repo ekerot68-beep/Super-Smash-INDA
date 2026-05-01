@@ -17,7 +17,8 @@ const ATTACK_COOLDOWN := 0.4       # seconds before you can attack again
 const HIT_DAMAGE := 8.0            # damage % added per hit
 const HIT_KNOCKBACK_X := 220.0     # horizontal knockback speed
 const HIT_KNOCKBACK_Y := -180.0    # vertical knockback (upward)
-const KNOCKBACK_LOCKOUT := 0.18    # seconds the victim can't act
+const KNOCKBACK_LOCKOUT := 0.3    # seconds the victim can't act
+const KNOCKBACK_MULTIPLIER := 0.1
 
 # State
 var damage: float = 0.0            # Smash-style "%" — increases on hit
@@ -119,8 +120,8 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 func take_hit(attacker_facing: int) -> void:
 	damage += HIT_DAMAGE
-	velocity.x = HIT_KNOCKBACK_X * attacker_facing
-	velocity.y = HIT_KNOCKBACK_Y
+	velocity.x = HIT_KNOCKBACK_X * attacker_facing + damage * damage * KNOCKBACK_MULTIPLIER
+	velocity.y = HIT_KNOCKBACK_Y - damage * damage * KNOCKBACK_MULTIPLIER * 0.8
 	_knockback_timer = KNOCKBACK_LOCKOUT
 	_update_label()
 

@@ -1,7 +1,11 @@
 [gd_scene format=3 uid="uid://bipii2rnpkppq"]
 
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
-[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_yqjtg"]
+[ext_resource type="PackedScene" uid="uid://cplayer000001" path="res://scenes/player.tscn" id="2_yqjtg"]
+[ext_resource type="PackedScene" uid="uid://q12wjwc28gjb" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_lbhrr"]
+distance = -158.0
 
 [node name="Game" type="Node2D" unique_id=1458226988]
 
@@ -25,3 +29,8 @@ right_key = 68
 jump_key = 87
 attack_key = 32
 player_color = Color(0.28839856, 0.6254761, 0.9371392, 1)
+
+[node name="deathzone" parent="." unique_id=1842120127 instance=ExtResource("3_lnu2h")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="deathzone" unique_id=1909548511]
+shape = SubResource("WorldBoundaryShape2D_lbhrr")

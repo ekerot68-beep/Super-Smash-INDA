@@ -120,7 +120,7 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 func take_hit(attacker_facing: int) -> void:
 	damage += HIT_DAMAGE
-	velocity.x = HIT_KNOCKBACK_X * attacker_facing + damage * damage * KNOCKBACK_MULTIPLIER
+	velocity.x = (HIT_KNOCKBACK_X + damage * damage * KNOCKBACK_MULTIPLIER) * attacker_facing
 	velocity.y = HIT_KNOCKBACK_Y - damage * damage * KNOCKBACK_MULTIPLIER * 0.8
 	_knockback_timer = KNOCKBACK_LOCKOUT
 	_update_label()

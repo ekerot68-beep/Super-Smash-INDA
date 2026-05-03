@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://bipii2rnpkppq"]
 
+[ext_resource type="Script" uid="uid://dumvm573nb6uj" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://cplayer000001" path="res://scenes/player.tscn" id="2_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://q12wjwc28gjb" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
@@ -8,6 +9,7 @@
 distance = -158.0
 
 [node name="Game" type="Node2D" unique_id=1458226988]
+script = ExtResource("1_lbhrr")
 
 [node name="MainPlatform" parent="." unique_id=866560261 instance=ExtResource("1_uwrxv")]
 position = Vector2(-82, 33)
@@ -15,14 +17,14 @@ position = Vector2(-82, 33)
 [node name="Camera2D" type="Camera2D" parent="." unique_id=930410798]
 zoom = Vector2(4, 4)
 
-[node name="Player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
+[node name="player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
 position = Vector2(45, 0)
 left_key = 76
 right_key = 39
 jump_key = 80
 attack_key = 44
 
-[node name="Player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
+[node name="player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
 position = Vector2(-45, 0)
 left_key = 65
 right_key = 68
@@ -34,3 +36,16 @@ player_color = Color(0.28839856, 0.6254761, 0.9371392, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="deathzone" unique_id=1909548511]
 shape = SubResource("WorldBoundaryShape2D_lbhrr")
+
+[node name="game_label" type="Label" parent="." unique_id=511839337]
+offset_left = -140.0
+offset_top = -66.0
+offset_right = 140.0
+offset_bottom = -29.0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="end_game_timer" type="Timer" parent="." unique_id=1538817346]
+wait_time = 2.0
+
+[connection signal="timeout" from="end_game_timer" to="." method="_on_end_game_timer_timeout"]

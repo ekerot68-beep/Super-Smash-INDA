@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+# Variable for main scene
+@onready var game: Node2D = $".."
+
 # Per-player controls and color — set these in the Inspector for each Player instance.
 @export var left_key: Key = KEY_LEFT
 @export var right_key: Key = KEY_RIGHT
@@ -18,7 +21,8 @@ const HIT_DAMAGE := 8.0            # damage % added per hit
 const HIT_KNOCKBACK_X := 220.0     # horizontal knockback speed
 const HIT_KNOCKBACK_Y := -180.0    # vertical knockback (upward)
 const KNOCKBACK_LOCKOUT := 0.3    # seconds the victim can't act
-const KNOCKBACK_MULTIPLIER := 0.1
+const KNOCKBACK_MULTIPLIER := 0.1 # knockback strength
+const RESPAWNS := 1               # amount of respawns
 
 # State
 var damage: float = 0.0            # Smash-style "%" — increases on hit
@@ -30,6 +34,9 @@ var _knockback_timer: float = 0.0
 var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
+
+var spawn_position: Vector2
+var respawns := RESPAWNS
 
 @onready var _color_rect: ColorRect = $ColorRect
 @onready var _hitbox: Area2D = $Hitbox
@@ -43,6 +50,7 @@ func _ready() -> void:
 	_hitbox_shape.disabled = true
 	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_update_label()
+	spawn_position = global_position
 
 
 func _physics_process(delta: float) -> void:
@@ -120,7 +128,7 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 func take_hit(attacker_facing: int) -> void:
 	damage += HIT_DAMAGE
-	velocity.x = HIT_KNOCKBACK_X * attacker_facing + damage * damage * KNOCKBACK_MULTIPLIER
+	velocity.x = (HIT_KNOCKBACK_X + damage * damage * KNOCKBACK_MULTIPLIER) * attacker_facing
 	velocity.y = HIT_KNOCKBACK_Y - damage * damage * KNOCKBACK_MULTIPLIER * 0.8
 	_knockback_timer = KNOCKBACK_LOCKOUT
 	_update_label()
@@ -128,3 +136,12 @@ func take_hit(attacker_facing: int) -> void:
 
 func _update_label() -> void:
 	_damage_label.text = "%d%%" % int(damage)
+
+func respawn():
+	if respawns == 0:
+		game.end_game()
+	respawns -= 1
+	global_position = spawn_position
+	damage = 0.0
+	facing = 1 
+	_update_label()

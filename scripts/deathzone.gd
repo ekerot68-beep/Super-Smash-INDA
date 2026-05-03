@@ -11,6 +11,5 @@ func _on_body_entered(body: CharacterBody2D) -> void:
 	timer.start()
 	
 func _on_timer_timeout() -> void:
-	print("hej")
 	if last_body:
 		last_body.respawn()

@@ -31,6 +31,8 @@ var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
 
+var spawn_position: Vector2
+
 @onready var _color_rect: ColorRect = $ColorRect
 @onready var _hitbox: Area2D = $Hitbox
 @onready var _hitbox_shape: CollisionShape2D = $Hitbox/CollisionShape2D
@@ -43,6 +45,7 @@ func _ready() -> void:
 	_hitbox_shape.disabled = true
 	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_update_label()
+	spawn_position = global_position
 
 
 func _physics_process(delta: float) -> void:
@@ -128,3 +131,9 @@ func take_hit(attacker_facing: int) -> void:
 
 func _update_label() -> void:
 	_damage_label.text = "%d%%" % int(damage)
+
+func respawn():
+	global_position = spawn_position
+	damage = 0.0
+	facing = 1 
+	_update_label()

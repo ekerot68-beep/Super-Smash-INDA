@@ -4,6 +4,7 @@ extends CharacterBody2D
 @export var left_key: Key = KEY_LEFT
 @export var right_key: Key = KEY_RIGHT
 @export var jump_key: Key = KEY_SPACE
+@export var down_key: Key = KEY_NONE     # Optional. Used as the "down" attack direction.
 @export var attack_key: Key = KEY_SHIFT
 @export var player_color: Color = Color(1, 0.35, 0.35, 1)
 
@@ -14,10 +15,14 @@ const JUMP_VELOCITY := -250.0
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing
 const ATTACK_COOLDOWN := 0.4       # seconds before you can attack again
-const HIT_DAMAGE := 8.0            # damage % added per hit
-const HIT_KNOCKBACK_X := 220.0     # horizontal knockback speed
-const HIT_KNOCKBACK_Y := -180.0    # vertical knockback (upward)
-const KNOCKBACK_LOCKOUT := 0.18    # seconds the victim can't act
+const KNOCKBACK_LOCKOUT := 0.18    # seconds the victim can't act after being hit
+
+# Charge tuning (for #19 — charged attacks)
+const MAX_CHARGE_TIME := 1.5                   # seconds for full charge
+const BASE_DAMAGE := 5.0                       # damage % on a tap (no charge)
+const MAX_CHARGE_DAMAGE := 22.0                # damage % at full charge
+const BASE_KNOCKBACK_SPEED := 200.0            # knockback magnitude on a tap
+const MAX_CHARGE_KNOCKBACK_SPEED := 480.0      # knockback magnitude at full charge
 
 # State
 var damage: float = 0.0            # Smash-style "%" — increases on hit
@@ -26,9 +31,19 @@ var facing: int = 1                # 1 = right, -1 = left
 var _attack_timer: float = 0.0
 var _cooldown_timer: float = 0.0
 var _knockback_timer: float = 0.0
+
+var _charging: bool = false
+var _charge_time: float = 0.0
+
+# Cached values for the active swing — set at release, used when a hit lands.
+var _current_attack_dir: Vector2 = Vector2.RIGHT
+var _current_attack_damage: float = 0.0
+var _current_attack_knockback: float = 0.0
+
 var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
+
 
 @onready var _color_rect: ColorRect = $ColorRect
 @onready var _hitbox: Area2D = $Hitbox
@@ -66,12 +81,21 @@ func _physics_process(delta: float) -> void:
 	if jump_just_pressed and is_on_floor() and _knockback_timer <= 0.0:
 		velocity.y = JUMP_VELOCITY
 
-	# Attack (blocked during knockback or cooldown)
+	# Attack input — charge model (#19)
 	var attack_held: bool = Input.is_physical_key_pressed(attack_key)
 	var attack_just_pressed: bool = attack_held and not _was_attack_held
+	var attack_just_released: bool = not attack_held and _was_attack_held
 	_was_attack_held = attack_held
-	if attack_just_pressed and _cooldown_timer <= 0.0 and _knockback_timer <= 0.0:
-		_start_attack()
+
+	if attack_just_pressed and _cooldown_timer <= 0.0 and _knockback_timer <= 0.0 and not _charging:
+		_start_charge()
+
+	if _charging:
+		_charge_time += delta
+		_update_charge_visual()
+		# Auto-release at max OR on key release
+		if attack_just_released or _charge_time >= MAX_CHARGE_TIME:
+			_release_attack()
 
 	# Horizontal movement (skip during knockback so you actually fly)
 	if _knockback_timer <= 0.0:
@@ -91,12 +115,58 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-func _start_attack() -> void:
+# ---- charge / attack flow ------------------------------------------------
+
+func _start_charge() -> void:
+	_charging = true
+	_charge_time = 0.0
+
+
+func _update_charge_visual() -> void:
+	var ratio: float = clampf(_charge_time / MAX_CHARGE_TIME, 0.0, 1.0)
+	# Tint toward white as charge builds — visual feedback.
+	_color_rect.color = player_color.lerp(Color.WHITE, ratio * 0.6)
+
+
+func _release_attack() -> void:
+	var ratio: float = clampf(_charge_time / MAX_CHARGE_TIME, 0.0, 1.0)
+	var dmg: float = lerpf(BASE_DAMAGE, MAX_CHARGE_DAMAGE, ratio)
+	var kb: float = lerpf(BASE_KNOCKBACK_SPEED, MAX_CHARGE_KNOCKBACK_SPEED, ratio)
+
+	# Compute attack direction from currently held keys (#18 — multi-direction).
+	# Up uses jump_key (which also makes you jump if grounded — fine for now).
+	# Down uses optional down_key, only if configured in the Inspector.
+	var dir := Vector2.ZERO
+	if Input.is_physical_key_pressed(left_key):
+		dir.x -= 1.0
+	if Input.is_physical_key_pressed(right_key):
+		dir.x += 1.0
+	if Input.is_physical_key_pressed(jump_key):
+		dir.y -= 1.0
+	if down_key != KEY_NONE and Input.is_physical_key_pressed(down_key):
+		dir.y += 1.0
+
+	if dir == Vector2.ZERO:
+		# Neutral: attack in facing direction.
+		dir = Vector2(float(facing), 0.0)
+	dir = dir.normalized()
+
+	_current_attack_dir = dir
+	_current_attack_damage = dmg
+	_current_attack_knockback = kb
+
+	# Reset charge state and visual.
+	_charging = false
+	_charge_time = 0.0
+	_color_rect.color = player_color
+
+	# Schedule hitbox active period and cooldown.
 	_attack_timer = ATTACK_DURATION
 	_cooldown_timer = ATTACK_COOLDOWN
 	_hit_targets_this_swing.clear()
-	# Move hitbox to the side the player is facing.
-	_hitbox.position.x = facing * 14
+
+	# Place hitbox in attack direction.
+	_hitbox.position = dir * 16.0
 	_hitbox.monitoring = true
 	_hitbox_shape.disabled = false
 
@@ -106,21 +176,25 @@ func _end_attack() -> void:
 	_hitbox_shape.disabled = true
 
 
+# ---- hit detection -------------------------------------------------------
+
 func _on_hitbox_body_entered(body: Node) -> void:
-	# Don't hit yourself, and only hit each target once per swing.
 	if body == self:
 		return
 	if body in _hit_targets_this_swing:
 		return
 	if body.has_method("take_hit"):
 		_hit_targets_this_swing.append(body)
-		body.take_hit(facing)
+		body.take_hit(_current_attack_dir, _current_attack_damage, _current_attack_knockback)
 
 
-func take_hit(attacker_facing: int) -> void:
-	damage += HIT_DAMAGE
-	velocity.x = HIT_KNOCKBACK_X * attacker_facing
-	velocity.y = HIT_KNOCKBACK_Y
+func take_hit(attack_dir: Vector2, damage_amount: float, knockback_speed: float) -> void:
+	damage += damage_amount
+	# Apply knockback in the attack direction.
+	velocity = attack_dir * knockback_speed
+	# For purely horizontal attacks, give a slight upward bias so the victim launches.
+	if absf(attack_dir.y) < 0.1:
+		velocity.y = -knockback_speed * 0.4
 	_knockback_timer = KNOCKBACK_LOCKOUT
 	_update_label()
 

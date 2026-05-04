@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://cplayer000001"]
+[gd_scene format=3 uid="uid://cplayer000001"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://bvk88c2m6yh2i" path="res://scripts/player.gd" id="1_player"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
 size = Vector2(16, 32)
@@ -8,27 +8,27 @@ size = Vector2(16, 32)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hitbox"]
 size = Vector2(24, 24)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=581298898]
 script = ExtResource("1_player")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1359325202]
 shape = SubResource("RectangleShape2D_player")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=827856005]
 offset_left = -8.0
 offset_top = -16.0
 offset_right = 8.0
 offset_bottom = 16.0
 color = Color(1, 0.35, 0.35, 1)
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=1450070775]
 monitoring = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1847294449]
 shape = SubResource("RectangleShape2D_hitbox")
 disabled = true
 
-[node name="DamageLabel" type="Label" parent="."]
+[node name="DamageLabel" type="Label" parent="." unique_id=470658086]
 offset_left = -20.0
 offset_top = -32.0
 offset_right = 20.0

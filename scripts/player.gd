@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+# Reference to the parent Game node (used for end_game() callbacks).
+@onready var game: Node2D = $".."
+
 # Per-player controls and color — set these in the Inspector for each Player instance.
 @export var left_key: Key = KEY_LEFT
 @export var right_key: Key = KEY_RIGHT
@@ -15,9 +18,11 @@ const JUMP_VELOCITY := -250.0
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing
 const ATTACK_COOLDOWN := 0.4       # seconds before you can attack again
-const KNOCKBACK_LOCKOUT := 0.18    # seconds the victim can't act after being hit
+const KNOCKBACK_LOCKOUT := 0.3     # seconds the victim can't act after being hit
+const KNOCKBACK_MULTIPLIER := 0.1  # damage-based knockback scaling factor (#6)
+const RESPAWNS := 1                # number of respawns before elimination
 
-# Charge tuning (for #19 — charged attacks)
+# Charge tuning (#19 — charged attacks)
 const MAX_CHARGE_TIME := 1.5                   # seconds for full charge
 const BASE_DAMAGE := 5.0                       # damage % on a tap (no charge)
 const MAX_CHARGE_DAMAGE := 22.0                # damage % at full charge
@@ -44,6 +49,8 @@ var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
 
+var spawn_position: Vector2
+var respawns := RESPAWNS
 
 @onready var _color_rect: ColorRect = $ColorRect
 @onready var _hitbox: Area2D = $Hitbox
@@ -57,6 +64,7 @@ func _ready() -> void:
 	_hitbox_shape.disabled = true
 	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_update_label()
+	spawn_position = global_position
 
 
 func _physics_process(delta: float) -> void:
@@ -190,14 +198,25 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 func take_hit(attack_dir: Vector2, damage_amount: float, knockback_speed: float) -> void:
 	damage += damage_amount
-	# Apply knockback in the attack direction.
-	velocity = attack_dir * knockback_speed
+	# Combine our directional knockback (#18) with damage-based scaling (#6).
+	var scaled_kb: float = knockback_speed + damage * damage * KNOCKBACK_MULTIPLIER
+	velocity = attack_dir * scaled_kb
 	# For purely horizontal attacks, give a slight upward bias so the victim launches.
 	if absf(attack_dir.y) < 0.1:
-		velocity.y = -knockback_speed * 0.4
+		velocity.y = -scaled_kb * 0.4
 	_knockback_timer = KNOCKBACK_LOCKOUT
 	_update_label()
 
 
 func _update_label() -> void:
 	_damage_label.text = "%d%%" % int(damage)
+
+
+func respawn():
+	if respawns == 0:
+		game.end_game()
+	respawns -= 1
+	global_position = spawn_position
+	damage = 0.0
+	facing = 1
+	_update_label()

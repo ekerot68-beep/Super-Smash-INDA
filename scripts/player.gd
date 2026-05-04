@@ -29,6 +29,12 @@ const MAX_CHARGE_DAMAGE := 22.0                # damage % at full charge
 const BASE_KNOCKBACK_SPEED := 200.0            # knockback magnitude on a tap
 const MAX_CHARGE_KNOCKBACK_SPEED := 480.0      # knockback magnitude at full charge
 
+# Hitbox flash (visual feedback when attacking)
+const FLASH_BASE_DURATION := 0.15              # seconds the flash lasts on a tap
+const FLASH_MAX_DURATION := 0.5                # seconds the flash lasts at full charge
+const FLASH_BASE_ALPHA := 0.35                 # opacity at start of a tap flash
+const FLASH_MAX_ALPHA := 0.95                  # opacity at start of full-charge flash
+
 # State
 var damage: float = 0.0            # Smash-style "%" — increases on hit
 var facing: int = 1                # 1 = right, -1 = left
@@ -49,12 +55,18 @@ var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
 
+# Flash state
+var _flash_timer: float = 0.0
+var _flash_total_duration: float = 0.0
+var _flash_max_alpha: float = 0.0
+
 var spawn_position: Vector2
 var respawns := RESPAWNS
 
 @onready var _color_rect: ColorRect = $ColorRect
 @onready var _hitbox: Area2D = $Hitbox
 @onready var _hitbox_shape: CollisionShape2D = $Hitbox/CollisionShape2D
+@onready var _hitbox_flash: ColorRect = $Hitbox/HitboxFlash
 @onready var _damage_label: Label = $DamageLabel
 
 
@@ -62,6 +74,7 @@ func _ready() -> void:
 	_color_rect.color = player_color
 	_hitbox.monitoring = false
 	_hitbox_shape.disabled = true
+	_hitbox_flash.visible = false
 	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_update_label()
 	spawn_position = global_position
@@ -77,6 +90,14 @@ func _physics_process(delta: float) -> void:
 		_cooldown_timer -= delta
 	if _knockback_timer > 0.0:
 		_knockback_timer -= delta
+	if _flash_timer > 0.0:
+		_flash_timer -= delta
+		if _flash_timer <= 0.0:
+			_hitbox_flash.visible = false
+		else:
+			# Fade alpha linearly from max → 0 over the flash duration.
+			var t: float = _flash_timer / _flash_total_duration
+			_hitbox_flash.color = Color(1, 1, 1, _flash_max_alpha * t)
 
 	# Gravity
 	if not is_on_floor():
@@ -177,6 +198,13 @@ func _release_attack() -> void:
 	_hitbox.position = dir * 16.0
 	_hitbox.monitoring = true
 	_hitbox_shape.disabled = false
+
+	# Trigger hitbox flash — brighter and longer-lived for stronger charges.
+	_flash_total_duration = lerpf(FLASH_BASE_DURATION, FLASH_MAX_DURATION, ratio)
+	_flash_max_alpha = lerpf(FLASH_BASE_ALPHA, FLASH_MAX_ALPHA, ratio)
+	_flash_timer = _flash_total_duration
+	_hitbox_flash.color = Color(1, 1, 1, _flash_max_alpha)
+	_hitbox_flash.visible = true
 
 
 func _end_attack() -> void:

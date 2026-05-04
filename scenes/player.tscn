@@ -6,7 +6,7 @@
 size = Vector2(16, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hitbox"]
-size = Vector2(20, 24)
+size = Vector2(24, 24)
 
 [node name="Player" type="CharacterBody2D" unique_id=581298898]
 script = ExtResource("1_player")
@@ -27,6 +27,15 @@ monitoring = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1847294449]
 shape = SubResource("RectangleShape2D_hitbox")
 disabled = true
+
+[node name="HitboxFlash" type="ColorRect" parent="Hitbox"]
+visible = false
+mouse_filter = 2
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+color = Color(1, 1, 1, 0.6)
 
 [node name="DamageLabel" type="Label" parent="." unique_id=470658086]
 offset_left = -20.0

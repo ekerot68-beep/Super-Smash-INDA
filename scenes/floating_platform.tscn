@@ -1,15 +1,88 @@
 [gd_scene format=3 uid="uid://r5h76fdqlh8s"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_floating"]
-size = Vector2(60, 16)
+[ext_resource type="Texture2D" uid="uid://brdw5gbtb6acu" path="res://assets/inda/spritesheetFlyingPlatform.png" id="2_52pu0"]
 
-[node name="FloatingPlatform" type="StaticBody2D"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r332q"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(30, 8)
-shape = SubResource("RectangleShape2D_floating")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x4jxd"]
+size = Vector2(49, 6)
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 60.0
-offset_bottom = 16.0
-color = Color(0.7, 0.6, 0.85, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3864"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(0, 0, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lijdq"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(1792, 0, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3uy1b"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(3584, 0, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ay5gm"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(0, 1156, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qk78b"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(1792, 1156, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pbsro"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(3584, 1156, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jqrib"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(0, 2312, 1792, 1156)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2isgg"]
+atlas = ExtResource("2_52pu0")
+region = Rect2(1792, 2312, 1792, 1156)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fcj14"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l3864")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lijdq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3uy1b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ay5gm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qk78b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pbsro")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jqrib")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2isgg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="FloatingPlatform" type="StaticBody2D" unique_id=1551525211]
+physics_material_override = SubResource("PhysicsMaterial_r332q")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=198165898]
+position = Vector2(24.5, 3)
+shape = SubResource("RectangleShape2D_x4jxd")
+one_way_collision = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2030762995]
+z_index = -1
+position = Vector2(23.999996, 4.999993)
+scale = Vector2(0.028, 0.028)
+sprite_frames = SubResource("SpriteFrames_fcj14")
+autoplay = "default"
+frame_progress = 0.8076238

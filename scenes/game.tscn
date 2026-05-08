@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/floating_platform.tscn" id="4_float"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_playarea"]
-size = Vector2(500, 450)
+size = Vector2(500, 300)
 
 [node name="Game" type="Node2D" unique_id=1458226988]
 script = ExtResource("1_lbhrr")
@@ -16,7 +16,7 @@ script = ExtResource("1_lbhrr")
 position = Vector2(-82, 33)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=930410798]
-zoom = Vector2(3, 3)
+zoom = Vector2(2.5, 2.5)
 
 [node name="LeftFloating" parent="." unique_id=1367646327 instance=ExtResource("4_float")]
 position = Vector2(-192, 5)
@@ -45,7 +45,7 @@ player_color = Color(0.28839856, 0.6254761, 0.9371392, 1)
 [node name="deathzone" parent="." unique_id=1842120127 instance=ExtResource("3_lnu2h")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="deathzone" unique_id=1909548511]
-position = Vector2(0, 25)
+position = Vector2(0, 20)
 shape = SubResource("RectangleShape2D_playarea")
 
 [node name="game_label" type="Label" parent="." unique_id=511839337]

@@ -3,13 +3,14 @@ extends CharacterBody2D
 # Reference to the parent Game node (used for end_game() callbacks).
 @onready var game: Node2D = $".."
 
-# Per-player controls and color — set these in the Inspector for each Player instance.
+# Per-player controls and tint — set these in the Inspector for each Player instance.
 @export var left_key: Key = KEY_LEFT
 @export var right_key: Key = KEY_RIGHT
 @export var jump_key: Key = KEY_SPACE
 @export var down_key: Key = KEY_NONE     # Optional. Used as the "down" attack direction.
 @export var attack_key: Key = KEY_SHIFT
-@export var player_color: Color = Color(1, 0.35, 0.35, 1)
+@export var character_id: int = 1        # 1 = guy1 sprites, 2 = guy2 sprites
+@export var player_color: Color = Color(1, 1, 1, 1)  # Modulate (white = no tint).
 
 # Movement tuning
 const SPEED := 120.0
@@ -24,20 +25,20 @@ const KNOCKBACK_MULTIPLIER := 0.1  # damage-based knockback scaling factor (#6)
 const RESPAWNS := 1                # number of respawns before elimination
 
 # Charge tuning (#19 — charged attacks)
-const MAX_CHARGE_TIME := 2.5                   # seconds for full charge
-const BASE_DAMAGE := 5.0                       # damage % on a tap (no charge)
-const MAX_CHARGE_DAMAGE := 30                # damage % at full charge
-const BASE_KNOCKBACK_SPEED := 140            # knockback magnitude on a tap
-const MAX_CHARGE_KNOCKBACK_SPEED := 350      # knockback magnitude at full charge
+const MAX_CHARGE_TIME := 2.5
+const BASE_DAMAGE := 5.0
+const MAX_CHARGE_DAMAGE := 30.0
+const BASE_KNOCKBACK_SPEED := 140.0
+const MAX_CHARGE_KNOCKBACK_SPEED := 350.0
 
 # Hitbox flash (visual feedback when attacking)
-const FLASH_BASE_DURATION := 0.15              # seconds the flash lasts on a tap
-const FLASH_MAX_DURATION := 0.5                # seconds the flash lasts at full charge
-const FLASH_BASE_ALPHA := 0.35                 # opacity at start of a tap flash
-const FLASH_MAX_ALPHA := 0.95                  # opacity at start of full-charge flash
+const FLASH_BASE_DURATION := 0.15
+const FLASH_MAX_DURATION := 0.5
+const FLASH_BASE_ALPHA := 0.35
+const FLASH_MAX_ALPHA := 0.95
 
 # State
-var damage: float = 0.0            # Smash-style "%" — increases on hit
+var damage: float = 0.0
 var facing: int = 1                # 1 = right, -1 = left
 
 var _attack_timer: float = 0.0
@@ -65,7 +66,15 @@ var _flash_max_alpha: float = 0.0
 var spawn_position: Vector2
 var respawns := RESPAWNS
 
-@onready var _color_rect: ColorRect = $ColorRect
+# Loaded textures for the chosen character.
+var _tex_idle: Texture2D
+var _tex_jump: Texture2D
+var _tex_punch_right: Texture2D
+var _tex_punch_up: Texture2D
+var _tex_punch_upright: Texture2D
+var _tex_punch_down: Texture2D
+
+@onready var _sprite: Sprite2D = $Sprite2D
 @onready var _hitbox: Area2D = $Hitbox
 @onready var _hitbox_shape: CollisionShape2D = $Hitbox/CollisionShape2D
 @onready var _hitbox_flash: ColorRect = $Hitbox/HitboxFlash
@@ -73,13 +82,26 @@ var respawns := RESPAWNS
 
 
 func _ready() -> void:
-	_color_rect.color = player_color
+	_load_textures()
+	_sprite.texture = _tex_idle
+	_sprite.modulate = player_color
 	_hitbox.monitoring = false
 	_hitbox_shape.disabled = true
 	_hitbox_flash.visible = false
 	_hitbox.body_entered.connect(_on_hitbox_body_entered)
 	_update_label()
 	spawn_position = global_position
+
+
+func _load_textures() -> void:
+	# Pick guy1 or guy2 sprite set based on the character_id exported on this instance.
+	var prefix: String = "res://assets/sprites/guy%d" % character_id
+	_tex_idle = load("%s.png" % prefix)
+	_tex_jump = load("%s_jump_right.png" % prefix)
+	_tex_punch_right = load("%s_punch_right.png" % prefix)
+	_tex_punch_up = load("%s_punch_up.png" % prefix)
+	_tex_punch_upright = load("%s_punch_upright.png" % prefix)
+	_tex_punch_down = load("%s_punch_down.png" % prefix)
 
 
 func _physics_process(delta: float) -> void:
@@ -116,15 +138,10 @@ func _physics_process(delta: float) -> void:
 
 	if _knockback_timer <= 0.0:
 		if is_on_floor():
-			# Holding the key OR a fresh press both jump from the ground.
-			# This lets you bunny-hop / auto-jump on landing without precise timing.
 			if jump_held or jump_just_pressed:
 				velocity.y = JUMP_VELOCITY
 				_jumps_used += 1
 		elif jump_just_pressed and _jumps_used < MAX_JUMPS:
-			# Air jump: only on a fresh press, and only if we have a jump left.
-			# Holding the key in the air does NOT auto-double-jump — you must release
-			# and re-press, otherwise hold-to-jump would burn the second jump immediately.
 			velocity.y = JUMP_VELOCITY
 			_jumps_used += 1
 
@@ -140,7 +157,6 @@ func _physics_process(delta: float) -> void:
 	if _charging:
 		_charge_time += delta
 		_update_charge_visual()
-		# Auto-release at max OR on key release
 		if attack_just_released or _charge_time >= MAX_CHARGE_TIME:
 			_release_attack()
 
@@ -160,6 +176,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0.0, SPEED)
 
 	move_and_slide()
+	_update_sprite()
 
 
 # ---- charge / attack flow ------------------------------------------------
@@ -170,9 +187,10 @@ func _start_charge() -> void:
 
 
 func _update_charge_visual() -> void:
+	# Brighten the sprite as charge builds — works on the pixel art without tinting.
 	var ratio: float = clampf(_charge_time / MAX_CHARGE_TIME, 0.0, 1.0)
-	# Tint toward white as charge builds — visual feedback.
-	_color_rect.color = player_color.lerp(Color.WHITE, ratio * 0.6)
+	var brightness: float = 1.0 + ratio * 0.6
+	_sprite.modulate = Color(brightness, brightness, brightness, 1.0) * player_color
 
 
 func _release_attack() -> void:
@@ -181,8 +199,6 @@ func _release_attack() -> void:
 	var kb: float = lerpf(BASE_KNOCKBACK_SPEED, MAX_CHARGE_KNOCKBACK_SPEED, ratio)
 
 	# Compute attack direction from currently held keys (#18 — multi-direction).
-	# Up uses jump_key (which also makes you jump if grounded — fine for now).
-	# Down uses optional down_key, only if configured in the Inspector.
 	var dir := Vector2.ZERO
 	if Input.is_physical_key_pressed(left_key):
 		dir.x -= 1.0
@@ -194,7 +210,6 @@ func _release_attack() -> void:
 		dir.y += 1.0
 
 	if dir == Vector2.ZERO:
-		# Neutral: attack in facing direction.
 		dir = Vector2(float(facing), 0.0)
 	dir = dir.normalized()
 
@@ -205,7 +220,7 @@ func _release_attack() -> void:
 	# Reset charge state and visual.
 	_charging = false
 	_charge_time = 0.0
-	_color_rect.color = player_color
+	_sprite.modulate = player_color
 
 	# Schedule hitbox active period and cooldown.
 	_attack_timer = ATTACK_DURATION
@@ -228,6 +243,46 @@ func _release_attack() -> void:
 func _end_attack() -> void:
 	_hitbox.monitoring = false
 	_hitbox_shape.disabled = true
+
+
+# ---- sprite state -------------------------------------------------------
+
+func _update_sprite() -> void:
+	# During an active swing, show the punch pose matching the attack direction.
+	if _attack_timer > 0.0:
+		var d: Vector2 = _current_attack_dir
+		if d.x == 0.0 and d.y < 0.0:
+			# Pure up
+			_sprite.texture = _tex_punch_up
+			_sprite.flip_h = false
+		elif d.x == 0.0 and d.y > 0.0:
+			# Pure down
+			_sprite.texture = _tex_punch_down
+			_sprite.flip_h = false
+		elif d.y < 0.0:
+			# Diagonal up-right or up-left
+			_sprite.texture = _tex_punch_upright
+			_sprite.flip_h = d.x < 0.0
+		elif d.y > 0.0:
+			# Diagonal down-right / down-left (no dedicated diagonal-down sprite,
+			# fall back to the side punch).
+			_sprite.texture = _tex_punch_right
+			_sprite.flip_h = d.x < 0.0
+		else:
+			# Pure horizontal
+			_sprite.texture = _tex_punch_right
+			_sprite.flip_h = d.x < 0.0
+		return
+
+	# In the air: show the jump pose.
+	if not is_on_floor():
+		_sprite.texture = _tex_jump
+		_sprite.flip_h = facing < 0
+		return
+
+	# Default: idle pose, flipped to face movement direction.
+	_sprite.texture = _tex_idle
+	_sprite.flip_h = facing < 0
 
 
 # ---- hit detection -------------------------------------------------------

@@ -24,11 +24,11 @@ const KNOCKBACK_MULTIPLIER := 0.1  # damage-based knockback scaling factor (#6)
 const RESPAWNS := 1                # number of respawns before elimination
 
 # Charge tuning (#19 — charged attacks)
-const MAX_CHARGE_TIME := 1.5                   # seconds for full charge
+const MAX_CHARGE_TIME := 2.5                   # seconds for full charge
 const BASE_DAMAGE := 5.0                       # damage % on a tap (no charge)
-const MAX_CHARGE_DAMAGE := 22.0                # damage % at full charge
-const BASE_KNOCKBACK_SPEED := 200.0            # knockback magnitude on a tap
-const MAX_CHARGE_KNOCKBACK_SPEED := 480.0      # knockback magnitude at full charge
+const MAX_CHARGE_DAMAGE := 30                # damage % at full charge
+const BASE_KNOCKBACK_SPEED := 140            # knockback magnitude on a tap
+const MAX_CHARGE_KNOCKBACK_SPEED := 350      # knockback magnitude at full charge
 
 # Hitbox flash (visual feedback when attacking)
 const FLASH_BASE_DURATION := 0.15              # seconds the flash lasts on a tap

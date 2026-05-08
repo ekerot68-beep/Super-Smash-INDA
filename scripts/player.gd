@@ -14,6 +14,7 @@ extends CharacterBody2D
 # Movement tuning
 const SPEED := 120.0
 const JUMP_VELOCITY := -250.0
+const MAX_JUMPS := 2               # 1 ground jump + 1 air jump (Smash-style double jump)
 
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing
@@ -54,6 +55,7 @@ var _current_attack_knockback: float = 0.0
 var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
+var _jumps_used: int = 0
 
 # Flash state
 var _flash_timer: float = 0.0
@@ -99,16 +101,32 @@ func _physics_process(delta: float) -> void:
 			var t: float = _flash_timer / _flash_total_duration
 			_hitbox_flash.color = Color(1, 1, 1, _flash_max_alpha * t)
 
+	# Reset jump counter when grounded (also enables hold-to-jump-on-land below).
+	if is_on_floor():
+		_jumps_used = 0
+
 	# Gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	# Jump (blocked during knockback)
+	# Jump — supports double jump and hold-to-jump-on-land. Blocked during knockback.
 	var jump_held: bool = Input.is_physical_key_pressed(jump_key)
 	var jump_just_pressed: bool = jump_held and not _was_jump_held
 	_was_jump_held = jump_held
-	if jump_just_pressed and is_on_floor() and _knockback_timer <= 0.0:
-		velocity.y = JUMP_VELOCITY
+
+	if _knockback_timer <= 0.0:
+		if is_on_floor():
+			# Holding the key OR a fresh press both jump from the ground.
+			# This lets you bunny-hop / auto-jump on landing without precise timing.
+			if jump_held or jump_just_pressed:
+				velocity.y = JUMP_VELOCITY
+				_jumps_used += 1
+		elif jump_just_pressed and _jumps_used < MAX_JUMPS:
+			# Air jump: only on a fresh press, and only if we have a jump left.
+			# Holding the key in the air does NOT auto-double-jump — you must release
+			# and re-press, otherwise hold-to-jump would burn the second jump immediately.
+			velocity.y = JUMP_VELOCITY
+			_jumps_used += 1
 
 	# Attack input — charge model (#19)
 	var attack_held: bool = Input.is_physical_key_pressed(attack_key)

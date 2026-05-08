@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://dumvm573nb6uj" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
-[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_yqjtg"]
-[ext_resource type="PackedScene" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
-[ext_resource type="PackedScene" path="res://scenes/floating_platform.tscn" id="4_float"]
+[ext_resource type="PackedScene" uid="uid://cplayer000001" path="res://scenes/player.tscn" id="2_yqjtg"]
+[ext_resource type="PackedScene" uid="uid://q12wjwc28gjb" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://r5h76fdqlh8s" path="res://scenes/floating_platform.tscn" id="4_float"]
+[ext_resource type="Texture2D" uid="uid://dibqgdvus4p3w" path="res://assets/inda/background.png" id="6_p57ef"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_playarea"]
 size = Vector2(500, 300)
@@ -17,15 +18,6 @@ position = Vector2(-82, 33)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=930410798]
 zoom = Vector2(2.5, 2.5)
-
-[node name="LeftFloating" parent="." unique_id=1367646327 instance=ExtResource("4_float")]
-position = Vector2(-192, 5)
-
-[node name="RightFloating" parent="." unique_id=106365959 instance=ExtResource("4_float")]
-position = Vector2(132, 5)
-
-[node name="TopFloating" parent="." unique_id=287770220 instance=ExtResource("4_float")]
-position = Vector2(-30, -30)
 
 [node name="player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
 position = Vector2(45, 0)
@@ -58,5 +50,20 @@ vertical_alignment = 1
 
 [node name="end_game_timer" type="Timer" parent="." unique_id=1538817346]
 wait_time = 2.0
+
+[node name="LeftFloatingPlatform" parent="." unique_id=1551525211 instance=ExtResource("4_float")]
+position = Vector2(-192, 5)
+
+[node name="TopFloatingPlatform" parent="." unique_id=111350025 instance=ExtResource("4_float")]
+position = Vector2(-30, -30)
+
+[node name="RightFloatingPlatform" parent="." unique_id=110432634 instance=ExtResource("4_float")]
+position = Vector2(132, 5)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=699098500]
+z_index = -15
+position = Vector2(0, 153)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_p57ef")
 
 [connection signal="timeout" from="end_game_timer" to="." method="_on_end_game_timer_timeout"]

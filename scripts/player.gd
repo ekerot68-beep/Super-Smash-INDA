@@ -9,6 +9,7 @@ extends CharacterBody2D
 @export var jump_key: Key = KEY_SPACE
 @export var down_key: Key = KEY_NONE     # Optional. Used as the "down" attack direction.
 @export var attack_key: Key = KEY_SHIFT
+@export var ranged_attack_key: Key = KEY_C
 @export var character_id: int = 1        # 1 = guy1 sprites, 2 = guy2 sprites
 @export var player_color: Color = Color(1, 1, 1, 1)  # Modulate (white = no tint).
 
@@ -20,6 +21,7 @@ const MAX_JUMPS := 2               # 1 ground jump + 1 air jump (Smash-style dou
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing
 const ATTACK_COOLDOWN := 0.4       # seconds before you can attack again
+const RANGED_ATTACK_COOLDOWN := 0.8   #seconds before you can ranged attack again
 const KNOCKBACK_LOCKOUT := 0.3     # seconds the victim can't act after being hit
 const KNOCKBACK_MULTIPLIER := 0.1  # damage-based knockback scaling factor (#6)
 const RESPAWNS := 1                # number of respawns before elimination
@@ -47,6 +49,8 @@ var _knockback_timer: float = 0.0
 
 var _charging: bool = false
 var _charge_time: float = 0.0
+
+var ranged_attack_released
 
 # Cached values for the active swing — set at release, used when a hit lands.
 var _current_attack_dir: Vector2 = Vector2.RIGHT
@@ -79,6 +83,7 @@ var _tex_punch_down: Texture2D
 @onready var _hitbox_shape: CollisionShape2D = $Hitbox/CollisionShape2D
 @onready var _hitbox_flash: ColorRect = $Hitbox/HitboxFlash
 @onready var _damage_label: Label = $DamageLabel
+const PROJECTILE = preload("res://scenes/projectile.tscn")
 
 
 func _ready() -> void:
@@ -159,6 +164,12 @@ func _physics_process(delta: float) -> void:
 		_update_charge_visual()
 		if attack_just_released or _charge_time >= MAX_CHARGE_TIME:
 			_release_attack()
+			
+	# Ranged Attack
+	var ranged_attack_pressed = Input.is_key_pressed(ranged_attack_key)
+	if ranged_attack_pressed and ranged_attack_released and _cooldown_timer <= 0.0 and _knockback_timer <= 0.0:
+		shoot()
+	ranged_attack_released = not ranged_attack_pressed
 
 	# Horizontal movement (skip during knockback so you actually fly)
 	if _knockback_timer <= 0.0:
@@ -244,6 +255,13 @@ func _end_attack() -> void:
 	_hitbox.monitoring = false
 	_hitbox_shape.disabled = true
 
+func shoot():
+	var p = PROJECTILE.instantiate()
+	p.shooter = self
+	p.global_position = global_position
+	p.direction =  Vector2.RIGHT if facing == 1 else Vector2.LEFT
+	get_tree().current_scene.add_child(p)
+	_cooldown_timer = RANGED_ATTACK_COOLDOWN
 
 # ---- sprite state -------------------------------------------------------
 

@@ -25,6 +25,7 @@ left_key = 76
 right_key = 39
 jump_key = 80
 attack_key = 44
+ranged_attack_key = 77
 
 [node name="player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
 position = Vector2(-45, 0)

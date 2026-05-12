@@ -10,6 +10,7 @@ extends CharacterBody2D
 @export var down_key: Key = KEY_NONE     # Optional. Used as the "down" attack direction.
 @export var attack_key: Key = KEY_SHIFT
 @export var ranged_attack_key: Key = KEY_C
+@export var shield_key: Key = KEY_S
 @export var character_id: int = 1        # 1 = guy1 sprites, 2 = guy2 sprites
 @export var player_color: Color = Color(1, 1, 1, 1)  # Modulate (white = no tint).
 
@@ -39,6 +40,11 @@ const FLASH_MAX_DURATION := 0.5
 const FLASH_BASE_ALPHA := 0.35
 const FLASH_MAX_ALPHA := 0.95
 
+# Shield tunig
+const MAX_SHIELD := 50.0
+const SHIELD_DRAIN := 20.0
+const SHIELD_REGEN := 10.0
+
 # State
 var damage: float = 0.0
 var facing: int = 1                # 1 = right, -1 = left
@@ -51,6 +57,9 @@ var _charging: bool = false
 var _charge_time: float = 0.0
 
 var ranged_attack_released
+
+var is_shielding: bool = false
+var shield_health: float = MAX_SHIELD
 
 # Cached values for the active swing — set at release, used when a hit lands.
 var _current_attack_dir: Vector2 = Vector2.RIGHT
@@ -83,8 +92,8 @@ var _tex_punch_down: Texture2D
 @onready var _hitbox_shape: CollisionShape2D = $Hitbox/CollisionShape2D
 @onready var _hitbox_flash: ColorRect = $Hitbox/HitboxFlash
 @onready var _damage_label: Label = $DamageLabel
+@onready var shield_rect: ColorRect = $ShieldRect
 const PROJECTILE = preload("res://scenes/projectile.tscn")
-
 
 func _ready() -> void:
 	_load_textures()
@@ -170,6 +179,9 @@ func _physics_process(delta: float) -> void:
 	if ranged_attack_pressed and ranged_attack_released and _cooldown_timer <= 0.0 and _knockback_timer <= 0.0:
 		shoot()
 	ranged_attack_released = not ranged_attack_pressed
+	
+	# Shielding
+	shielding(delta)
 
 	# Horizontal movement (skip during knockback so you actually fly)
 	if _knockback_timer <= 0.0:
@@ -262,6 +274,21 @@ func shoot():
 	p.direction =  Vector2.RIGHT if facing == 1 else Vector2.LEFT
 	get_tree().current_scene.add_child(p)
 	_cooldown_timer = RANGED_ATTACK_COOLDOWN
+	
+func shielding(delta):
+	var shield_pressed = Input.is_physical_key_pressed(shield_key)
+	
+	is_shielding = shield_pressed and shield_health > 0.0
+	
+	if is_shielding:
+		shield_health -= SHIELD_DRAIN * delta
+	else:
+		shield_health += SHIELD_REGEN * delta
+		
+	shield_health = clamp(shield_health, 0.0, MAX_SHIELD)
+		
+	shield_rect.visible = is_shielding
+	shield_rect.modulate.a = shield_health / MAX_SHIELD
 
 # ---- sprite state -------------------------------------------------------
 
@@ -316,6 +343,10 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 
 func take_hit(attack_dir: Vector2, damage_amount: float, knockback_speed: float) -> void:
+	if is_shielding:
+		shield_health -= damage_amount
+		return
+
 	damage += damage_amount
 	# Combine our directional knockback (#18) with damage-based scaling (#6).
 	var scaled_kb: float = knockback_speed + damage * damage * KNOCKBACK_MULTIPLIER
@@ -338,4 +369,5 @@ func respawn():
 	global_position = spawn_position
 	damage = 0.0
 	facing = 1
+	shield_health = MAX_SHIELD
 	_update_label()

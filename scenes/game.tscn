@@ -26,6 +26,7 @@ right_key = 39
 jump_key = 80
 attack_key = 44
 ranged_attack_key = 77
+shield_key = 46
 
 [node name="player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
 position = Vector2(-45, 0)
@@ -33,6 +34,8 @@ left_key = 65
 right_key = 68
 jump_key = 87
 attack_key = 32
+ranged_attack_key = 67
+shield_key = 88
 character_id = 2
 
 [node name="deathzone" parent="." unique_id=1842120127 instance=ExtResource("3_lnu2h")]

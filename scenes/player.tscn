@@ -44,3 +44,11 @@ offset_bottom = -18.0
 theme_override_font_sizes/font_size = 8
 text = "0%"
 horizontal_alignment = 1
+
+[node name="ShieldRect" type="ColorRect" parent="." unique_id=1157663033]
+visible = false
+offset_left = -8.0
+offset_top = -16.0
+offset_right = 8.0
+offset_bottom = 16.0
+color = Color(0, 0.80784315, 0.85882354, 1)

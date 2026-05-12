@@ -1,7 +1,5 @@
 extends Area2D
 
-@onready var timer: Timer = $Timer
-
 # Copy of the body that just left the play area, used for delayed respawn.
 var last_body: CharacterBody2D
 
@@ -9,10 +7,8 @@ var last_body: CharacterBody2D
 # Called when a CharacterBody2D leaves the play-area rectangle. Starts a short
 # timer before triggering respawn so death feels less abrupt.
 func _on_body_exited(body: CharacterBody2D) -> void:
-	last_body = body
-	timer.start()
+	respawn(body)
 
-
-func _on_timer_timeout() -> void:
-	if last_body:
-		last_body.respawn()
+func respawn(body: CharacterBody2D):
+	await get_tree().create_timer(1.0).timeout
+	body.respawn()

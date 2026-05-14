@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://r5h76fdqlh8s"]
+[gd_scene format=3 uid="uid://fynojnysdekd"]
 
 [ext_resource type="Texture2D" uid="uid://brdw5gbtb6acu" path="res://assets/inda/spritesheetFlyingPlatform.png" id="2_52pu0"]
 
@@ -72,6 +72,7 @@ animations = [{
 }]
 
 [node name="FloatingPlatform" type="StaticBody2D" unique_id=1551525211]
+collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_r332q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=198165898]

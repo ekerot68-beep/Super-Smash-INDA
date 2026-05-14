@@ -19,7 +19,8 @@ const GRAVITY_SCALE := 0.7
 const SPEED := 110.0
 const JUMP_VELOCITY := -200.0
 const FAST_FALL_SPEED := 250
-const MAX_JUMPS := 2               # 1 ground jump + 1 air jump (Smash-style double jump)
+const MAX_JUMPS := 2
+const WALL_SLIDE_SPEED := 20            
 
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing
@@ -27,7 +28,7 @@ const ATTACK_COOLDOWN := 0.4       # seconds before you can attack again
 const RANGED_ATTACK_COOLDOWN := 0.8   #seconds before you can ranged attack again
 const KNOCKBACK_LOCKOUT := 0.3     # seconds the victim can't act after being hit
 const KNOCKBACK_MULTIPLIER := 0.1  # damage-based knockback scaling factor (#6)
-const RESPAWNS := 1                # number of respawns before elimination
+const RESPAWNS := 2                # number of respawns before elimination
 
 # Charge tuning (#19 — charged attacks)
 const MAX_CHARGE_TIME := 2.5
@@ -72,6 +73,7 @@ var _hit_targets_this_swing: Array = []
 var _was_jump_held := false
 var _was_attack_held := false
 var _jumps_used: int = 0
+var _was_on_ground: bool = false
 
 # Flash state
 var _flash_timer: float = 0.0
@@ -88,6 +90,7 @@ var _tex_punch_right: Texture2D
 var _tex_punch_up: Texture2D
 var _tex_punch_upright: Texture2D
 var _tex_punch_down: Texture2D
+var _tex_wall_slide: Texture2D
 
 @onready var _sprite: Sprite2D = $Sprite2D
 @onready var _hitbox: Area2D = $Hitbox
@@ -118,7 +121,7 @@ func _load_textures() -> void:
 	_tex_punch_up = load("%s_punch_up.png" % prefix)
 	_tex_punch_upright = load("%s_punch_upright.png" % prefix)
 	_tex_punch_down = load("%s_punch_down.png" % prefix)
-
+	_tex_wall_slide = load("%s_hang_ledge.png" % prefix)
 
 func _physics_process(delta: float) -> void:
 	# Tick timers
@@ -140,12 +143,17 @@ func _physics_process(delta: float) -> void:
 			_hitbox_flash.color = Color(1, 1, 1, _flash_max_alpha * t)
 
 	# Reset jump counter when grounded (also enables hold-to-jump-on-land below).
-	if is_on_floor():
+	var on_ground: bool = is_on_floor() or is_on_wall() # are we touching ground or wall last frame?
+	if on_ground and not _was_on_ground:
 		_jumps_used = 0
+	_was_on_ground = on_ground
 
-	# Gravity
+	# Gravity & Wall Slide
 	if not is_on_floor():
 		velocity += get_gravity() * GRAVITY_SCALE * delta
+		
+		if is_on_wall() and velocity.y > 0:
+				velocity.y = WALL_SLIDE_SPEED
 		
 		if down_key != KEY_NONE and Input.is_physical_key_pressed(down_key) and velocity.y < FAST_FALL_SPEED:
 			velocity.y = FAST_FALL_SPEED
@@ -212,7 +220,6 @@ func _physics_process(delta: float) -> void:
 func _start_charge() -> void:
 	_charging = true
 	_charge_time = 0.0
-
 
 func _update_charge_visual() -> void:
 	# Brighten the sprite as charge builds — works on the pixel art without tinting.
@@ -322,6 +329,11 @@ func _update_sprite() -> void:
 			# Pure horizontal
 			_sprite.texture = _tex_punch_right
 			_sprite.flip_h = d.x < 0.0
+		return
+		
+	if not is_on_floor() and is_on_wall() and velocity.y > 0:
+		_sprite.texture = _tex_wall_slide
+		_sprite.flip_h = facing < 0
 		return
 
 	# In the air: show the jump pose.

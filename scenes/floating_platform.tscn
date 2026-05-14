@@ -72,6 +72,7 @@ animations = [{
 }]
 
 [node name="FloatingPlatform" type="StaticBody2D" unique_id=1551525211]
+collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_r332q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=198165898]

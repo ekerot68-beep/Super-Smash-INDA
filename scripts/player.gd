@@ -15,10 +15,10 @@ extends CharacterBody2D
 @export var player_color: Color = Color(1, 1, 1, 1)  # Modulate (white = no tint).
 
 # Movement tuning
-const GRAVITY_SCALE := 0.7
+const GRAVITY_SCALE := 0.65
 const SPEED := 110.0
-const JUMP_VELOCITY := -200.0
-const FAST_FALL_SPEED := 250
+const JUMP_VELOCITY := -205.0
+const FAST_FALL_SPEED := 205
 const MAX_JUMPS := 2
 const WALL_SLIDE_SPEED := 20            
 

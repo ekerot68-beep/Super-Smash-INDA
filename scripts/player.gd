@@ -15,8 +15,10 @@ extends CharacterBody2D
 @export var player_color: Color = Color(1, 1, 1, 1)  # Modulate (white = no tint).
 
 # Movement tuning
-const SPEED := 120.0
-const JUMP_VELOCITY := -250.0
+const GRAVITY_SCALE := 0.7
+const SPEED := 110.0
+const JUMP_VELOCITY := -200.0
+const FAST_FALL_SPEED := 250
 const MAX_JUMPS := 2               # 1 ground jump + 1 air jump (Smash-style double jump)
 
 # Combat tuning
@@ -143,7 +145,10 @@ func _physics_process(delta: float) -> void:
 
 	# Gravity
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		velocity += get_gravity() * GRAVITY_SCALE * delta
+		
+		if down_key != KEY_NONE and Input.is_physical_key_pressed(down_key) and velocity.y < FAST_FALL_SPEED:
+			velocity.y = FAST_FALL_SPEED
 
 	# Jump — supports double jump and hold-to-jump-on-land. Blocked during knockback.
 	var jump_held: bool = Input.is_physical_key_pressed(jump_key)

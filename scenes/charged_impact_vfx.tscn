@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://b834jhajhghum"]
+
+[ext_resource type="Texture2D" uid="uid://c862rjddapv8x" path="res://assets/VFX Free Pack/Effect_BigHit/30fps/Spritesheets/Effect_BigHit_1_557x553.png" id="1_lir1i"]
+[ext_resource type="Script" uid="uid://b81kopdvfrilv" path="res://scripts/vfx.gd" id="2_ubksj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ubksj"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(557, 0, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dcef0"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(1114, 0, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rkoej"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(1671, 0, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5oro"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(2228, 0, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1kewn"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(2785, 0, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dguw6"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(0, 553, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b4ejh"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(557, 553, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sdmid"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(1114, 553, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oe10d"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(1671, 553, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6uru"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(2228, 553, 557, 553)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rrvxp"]
+atlas = ExtResource("1_lir1i")
+region = Rect2(2785, 553, 557, 553)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rhcvi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ubksj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dcef0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rkoej")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d5oro")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1kewn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dguw6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b4ejh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sdmid")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oe10d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6uru")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rrvxp")
+}],
+"loop": false,
+"name": &"default",
+"speed": 30.0
+}]
+
+[node name="ChargedImpactVfx" type="AnimatedSprite2D" unique_id=263984285]
+sprite_frames = SubResource("SpriteFrames_rhcvi")
+script = ExtResource("2_ubksj")

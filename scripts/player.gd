@@ -20,7 +20,8 @@ const SPEED := 110.0
 const JUMP_VELOCITY := -205.0
 const FAST_FALL_SPEED := 205
 const MAX_JUMPS := 2
-const WALL_SLIDE_SPEED := 20            
+const WALL_SLIDE_SPEED := 20  
+const CHARGE_SPEED_MULTIPLIER := 0.5          
 
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing
@@ -99,6 +100,8 @@ var _tex_wall_slide: Texture2D
 @onready var _damage_label: Label = $DamageLabel
 @onready var shield_rect: ColorRect = $ShieldRect
 const PROJECTILE = preload("res://scenes/projectile.tscn")
+const VFX_IMPACT = preload("res://scenes/impact_vfx.tscn")
+const VFX_BIG_HIT = preload("res://scenes/charged_impact_vfx.tscn")
 
 func _ready() -> void:
 	_load_textures()
@@ -210,10 +213,12 @@ func _physics_process(delta: float) -> void:
 			direction += 1.0
 			facing = 1
 
+		var current_speed: float = SPEED * CHARGE_SPEED_MULTIPLIER if _charging else SPEED
+		
 		if direction != 0.0:
-			velocity.x = direction * SPEED
+			velocity.x = direction * current_speed
 		else:
-			velocity.x = move_toward(velocity.x, 0.0, SPEED)
+			velocity.x = move_toward(velocity.x, 0.0, current_speed)
 
 	move_and_slide()
 	_update_sprite()
@@ -277,7 +282,6 @@ func _release_attack() -> void:
 	_flash_timer = _flash_total_duration
 	_hitbox_flash.color = Color(1, 1, 1, _flash_max_alpha)
 	_hitbox_flash.visible = true
-
 
 func _end_attack() -> void:
 	_hitbox.monitoring = false
@@ -362,7 +366,6 @@ func _on_hitbox_body_entered(body: Node) -> void:
 		_hit_targets_this_swing.append(body)
 		body.take_hit(_current_attack_dir, _current_attack_damage, _current_attack_knockback)
 
-
 func take_hit(attack_dir: Vector2, damage_amount: float, knockback_speed: float) -> void:
 	if is_shielding:
 		shield_health -= damage_amount
@@ -377,7 +380,11 @@ func take_hit(attack_dir: Vector2, damage_amount: float, knockback_speed: float)
 		velocity.y = -scaled_kb * 0.4
 	_knockback_timer = KNOCKBACK_LOCKOUT
 	_update_label()
-
+	
+	var fx = VFX_IMPACT.instantiate()
+	fx.global_position = global_position
+	fx.scale = Vector2(0.15, 0.15)
+	get_tree().current_scene.add_child(fx)
 
 func _update_label() -> void:
 	_damage_label.text = "%d%%" % int(damage)

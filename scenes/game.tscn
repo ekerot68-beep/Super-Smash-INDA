@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://cmegicmq6laq8" path="res://scenes/player.tscn" id="2_yqjtg"]
 [ext_resource type="PackedScene" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
-[ext_resource type="PackedScene" path="res://scenes/floating_platform.tscn" id="4_float"]
+[ext_resource type="PackedScene" uid="uid://fynojnysdekd" path="res://scenes/floating_platform.tscn" id="4_float"]
 [ext_resource type="Texture2D" uid="uid://dibqgdvus4p3w" path="res://assets/inda/background.png" id="6_p57ef"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_playarea"]
@@ -21,6 +21,7 @@ zoom = Vector2(2.5, 2.5)
 
 [node name="player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
 position = Vector2(45, 0)
+collision_mask = 3
 left_key = 76
 right_key = 39
 jump_key = 80
@@ -31,6 +32,7 @@ shield_key = 46
 
 [node name="player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
 position = Vector2(-45, 0)
+collision_mask = 3
 left_key = 65
 right_key = 68
 jump_key = 87

@@ -147,6 +147,10 @@ func _physics_process(delta: float) -> void:
 	if on_ground and not _was_on_ground:
 		_jumps_used = 0
 	_was_on_ground = on_ground
+	
+	# drop through platforms on layer 2 when pressing down
+	var dropping: bool = down_key != KEY_NONE and Input.is_physical_key_pressed(down_key)
+	set_collision_mask_value(2, not dropping) # mask is enabled and disabled when down is not pressed and pressed respectively
 
 	# Gravity & Wall Slide
 	if not is_on_floor():

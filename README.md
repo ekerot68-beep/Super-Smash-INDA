@@ -10,3 +10,6 @@ Super Smash INDA is a 2 player 2d fighting game developed in Godot Engine where 
 
 ## How to play
 To play the game see last release, download SuperSmashINDA.zip, extract all files, and run the Super Smash INDA Application.
+
+## Game Demo
+https://github.com/user-attachments/assets/705ba4c3-2cc7-4b9e-bb5c-ffe588950a5d

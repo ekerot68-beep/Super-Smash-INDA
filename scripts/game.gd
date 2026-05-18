@@ -10,9 +10,9 @@ var winner: String
 
 func end_game():
 	if player.respawns == 0:
-		winner = player_2.name
+		winner = "Edgar"
 	elif player_2.respawns == 0:
-		winner = player.name
+		winner = "Fredrik"
 	game_label.text = "%s won the game" % winner
 	end_game_timer.start()
 

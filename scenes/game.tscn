@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dumvm573nb6uj" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://cplayer000001" path="res://scenes/player.tscn" id="2_yqjtg"]
-[ext_resource type="PackedScene" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://dvdbsf2oq4hbx" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://r5h76fdqlh8s" path="res://scenes/floating_platform.tscn" id="4_float"]
 [ext_resource type="Texture2D" uid="uid://dibqgdvus4p3w" path="res://assets/inda/background.png" id="6_p57ef"]
 
@@ -22,6 +22,7 @@ zoom = Vector2(4, 4)
 
 [node name="player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
 position = Vector2(45, -64)
+collision_layer = 4
 collision_mask = 3
 left_key = 76
 right_key = 39
@@ -33,6 +34,7 @@ shield_key = 46
 
 [node name="player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
 position = Vector2(-45, -64)
+collision_layer = 8
 collision_mask = 3
 left_key = 65
 right_key = 68

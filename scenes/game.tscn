@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dumvm573nb6uj" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
-[ext_resource type="PackedScene" uid="uid://cmegicmq6laq8" path="res://scenes/player.tscn" id="2_yqjtg"]
+[ext_resource type="PackedScene" uid="uid://cplayer000001" path="res://scenes/player.tscn" id="2_yqjtg"]
 [ext_resource type="PackedScene" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://r5h76fdqlh8s" path="res://scenes/floating_platform.tscn" id="4_float"]
 [ext_resource type="Texture2D" uid="uid://dibqgdvus4p3w" path="res://assets/inda/background.png" id="6_p57ef"]
@@ -70,7 +70,6 @@ position = Vector2(-25, -30)
 position = Vector2(132, 5)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=699098500]
-visible = false
 z_index = -15
 position = Vector2(0, 153)
 scale = Vector2(0.5, 0.5)

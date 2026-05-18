@@ -1,19 +1,38 @@
 # Super-Smash-INDA
-Super Smash INDA is a 2 player 2d fighting game developed in Godot Engine where the aim is to knock the other player of the map. The more a player gets hit the more they will get knocked back. If a player gets knocked off the map 3 times they lose and the other player wins. The game has many fun yet simple mechanics such as double jumps, charged attacks, ranged attacks, and shielding making easy to pickup but hard to master. Assets are inspired by the INDA course.
+**Super Smash INDA** is a local 2-player 2D fighting game built in the Godot Engine, inspired by Super Smash Bros. Two players brawl on a small platform stage where the goal is simple: knock the other player off the map. Every hit raises your opponent's damage percentage, and the higher their percentage, the further they fly when struck. Three falls and they're out.
 
 ## Controls
 | Action | Player 1 | Player 2 |
 |---|---|---|
-| Move Left | L | A |
-| Move Right | ' | D |
-| Jump | P | W |
-| Drop / Fast-fall | ; | S |
-| Melee Attack (hold to charge) | , | Space |
-| Ranged Attack | M | — |
-| Shield | . | X |
+| Move Left | A | L |
+| Move Right | D | ' |
+| Jump | W | P |
+| Drop / Fast-fall | S | ; |
+| Melee Attack (hold to charge) | Space | , |
+| Ranged Attack | - | M |
+| Shield | X | . |
+
+Tip: jump again mid-air for a double jump. press down while on a floating platform to drop through it. attacks can be charged by holding the attack key for more damage and knockback.
+
+## Game Rules
+- Each player starts with **3 lives** (respawns).
+- Hitting another player increases their damage **percentage**.
+- The higher the damage %, the further they fly when struck — knockback scales with damage.
+- A player loses a life when they get knocked **off the play area** (off any edge).
+- The first player to lose all 3 lives loses; the other wins.
 
 ## How to play
 To play the game see last release, download SuperSmashINDA.zip, extract all files, and run the Super Smash INDA Application.
+
+## Built With
+- [Godot Engine 4.6](https://godotengine.org)
+- GDScript
+
+## Authors
+- Vincent Froelich — [@TheUntamed12] & [@Vincent-Froelich](https://github.com/TheUntamed12)
+- Noah Ekerot — [@ekerot68-beep](https://github.com/ekerot68-beep)
+
+Developed as a project for the **INDA** course at KTH Royal Institute of Technology.
 
 ## Game Demo
 https://github.com/user-attachments/assets/705ba4c3-2cc7-4b9e-bb5c-ffe588950a5d

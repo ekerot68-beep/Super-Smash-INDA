@@ -29,7 +29,7 @@ To play the game see last release, download SuperSmashINDA.zip, extract all file
 - GDScript
 
 ## Authors
-- Vincent Froelich — [@TheUntamed12] & [@Vincent-Froelich](https://github.com/TheUntamed12)
+- Vincent Froelich — [@Vincent-Froelich](https://github.com/TheUntamed12)
 - Noah Ekerot — [@ekerot68-beep](https://github.com/ekerot68-beep)
 
 Developed as a project for the **INDA** course at KTH Royal Institute of Technology.

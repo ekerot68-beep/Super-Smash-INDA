@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://sjydlsguufg8"]
+
+[ext_resource type="Script" uid="uid://b50edd62irogq" path="res://scripts/menu.gd" id="1_mhnvy"]
+[ext_resource type="Texture2D" uid="uid://dibqgdvus4p3w" path="res://assets/inda/background.png" id="1_yqeox"]
+[ext_resource type="Texture2D" uid="uid://umbdbkx1v2aa" path="res://assets/sprites/title.png" id="2_vjb58"]
+[ext_resource type="Texture2D" uid="uid://u43cxycoj6it" path="res://assets/sprites/start.png" id="4_4ytvr"]
+
+[node name="Menu" type="Control" unique_id=285485618]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mhnvy")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=852939079]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_yqeox")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TextureRect2" type="TextureRect" parent="." unique_id=1217252683]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 200.0
+offset_right = 420.0
+offset_bottom = 410.0
+grow_horizontal = 2
+texture = ExtResource("2_vjb58")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureButton" type="TextureButton" parent="." unique_id=2042110610]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -447.0
+offset_top = -580.0
+offset_right = 451.0
+offset_bottom = -131.0
+grow_horizontal = 2
+grow_vertical = 0
+texture_normal = ExtResource("4_4ytvr")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]

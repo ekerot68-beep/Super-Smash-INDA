@@ -21,7 +21,7 @@ const JUMP_VELOCITY := -205.0
 const FAST_FALL_SPEED := 205
 const MAX_JUMPS := 2
 const WALL_SLIDE_SPEED := 20  
-const CHARGE_SPEED_MULTIPLIER := 0.5          
+const CHARGE_SPEED_MULTIPLIER := 0.5         
 
 # Combat tuning
 const ATTACK_DURATION := 0.15      # seconds the hitbox is active during a swing

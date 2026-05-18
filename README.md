@@ -36,3 +36,7 @@ Developed as a project for the **INDA** course at KTH Royal Institute of Technol
 
 ## Game Demo
 https://github.com/user-attachments/assets/705ba4c3-2cc7-4b9e-bb5c-ffe588950a5d
+
+<img width="956" height="537" alt="Screenshot 2026-05-18 at 23 40 33" src="https://github.com/user-attachments/assets/10a1ceb1-b1ad-4b3d-b0a4-a5180761548f" />
+<img width="956" height="537" alt="Screenshot 2026-05-18 at 23 38 52" src="https://github.com/user-attachments/assets/a7b60592-552d-4e92-9b8a-090355fa9ca4" />
+<img width="956" height="537" alt="Screenshot 2026-05-18 at 23 40 13" src="https://github.com/user-attachments/assets/e693a20b-74c9-4d89-b741-01f57879fe23" />

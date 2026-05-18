@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dumvm573nb6uj" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://pd86rsbjwk4o" path="res://scenes/main_platform.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://cplayer000001" path="res://scenes/player.tscn" id="2_yqjtg"]
-[ext_resource type="PackedScene" uid="uid://dvdbsf2oq4hbx" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://q12wjwc28gjb" path="res://scenes/deathzone.tscn" id="3_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://r5h76fdqlh8s" path="res://scenes/floating_platform.tscn" id="4_float"]
 [ext_resource type="Texture2D" uid="uid://dibqgdvus4p3w" path="res://assets/inda/background.png" id="6_p57ef"]
 
@@ -14,7 +14,7 @@ size = Vector2(500, 300)
 script = ExtResource("1_lbhrr")
 
 [node name="MainPlatform" parent="." unique_id=866560261 instance=ExtResource("1_uwrxv")]
-position = Vector2(-82, 33)
+position = Vector2(-100, 33)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=930410798]
 position = Vector2(0, 5)
@@ -69,7 +69,7 @@ position = Vector2(-192, 5)
 position = Vector2(-25, -30)
 
 [node name="RightFloatingPlatform" parent="." unique_id=110432634 instance=ExtResource("4_float")]
-position = Vector2(132, 5)
+position = Vector2(146, 5)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=699098500]
 z_index = -15

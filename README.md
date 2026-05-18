@@ -12,7 +12,7 @@
 | Ranged Attack | - | M |
 | Shield | X | . |
 
-Tip: jump again mid-air for a double jump. press down while on a floating platform to drop through it. attacks can be charged by holding the attack key for more damage and knockback.
+**Tip:** jump again mid-air for a double jump. press down while on a floating platform to drop through it. attacks can be charged by holding the attack key for more damage and knockback.
 
 ## Game Rules
 - Each player starts with **3 lives** (respawns).

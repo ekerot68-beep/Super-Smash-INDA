@@ -22,6 +22,7 @@ zoom = Vector2(4, 4)
 
 [node name="player" parent="." unique_id=147218439 instance=ExtResource("2_yqjtg")]
 position = Vector2(45, -64)
+collision_layer = 4
 collision_mask = 3
 left_key = 76
 right_key = 39
@@ -33,6 +34,7 @@ shield_key = 46
 
 [node name="player2" parent="." unique_id=1250068751 instance=ExtResource("2_yqjtg")]
 position = Vector2(-45, -64)
+collision_layer = 8
 collision_mask = 3
 left_key = 65
 right_key = 68

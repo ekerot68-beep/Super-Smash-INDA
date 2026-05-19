@@ -2,7 +2,7 @@
 **Super Smash INDA** is a local 2-player 2D fighting game built in the Godot Engine, inspired by Super Smash Bros. Two players brawl on a small platform stage where the goal is simple: knock the other player off the map. Every hit raises your opponent's damage percentage, and the higher their percentage, the further they fly when struck. Three falls and they're out.
 
 ## Controls
-| Action | Player 1 | Player 2 |
+| Action | Edgar | Fredrik |
 |---|---|---|
 | Move Left | A | L |
 | Move Right | D | ' |
